@@ -43,9 +43,25 @@ This project builds a **configurable clustering framework** that:
 
 ---
 
+## 📁 Project Structure
+
+```
+power-fuzzy-clustering/
+├── README.md
+├── src/
+│   ├── pd_clust.R              # Main clustering function
+│   ├── covariance_updates.R    # D/D_k matrix update functions
+│   ├── distance_utils.R         # Distance calculation and matrix utilities
+│   └── model_config.R           # Model configuration and initialization
+├── simulations/
+│   ├── data_generation.R       # Synthetic data generation
+│   └── run_simulation.R         # Simulation execution
+└── results/                     # Output directory for results
+```
+
 ##  Core Components
 
-### 1. Clustering Engine
+### 1. Clustering Engine (`src/pd_clust.R`)
 - `pd_clust()` — main iterative clustering routine
 - Modular update steps for:
   - cluster centers
@@ -53,17 +69,26 @@ This project builds a **configurable clustering framework** that:
   - covariance components
 - Objective tracked via **Joint Distance Function (JDF)**
 
-### 2. Covariance Model System
-Each model specifies a different structure for Σₖ, including:
-- spherical,
-- diagonal,
-- shared orientation,
-- cluster-specific orientation,
-- fully general covariance.
+### 2. Model Configuration (`src/model_config.R`)
+- `ModelConfig` — configuration for all 14 model variants
+- `initialize_parameters()` — parameter initialization
+- `PDClustResult()` — result object constructor
 
-Model selection is handled via a unified configuration interface.
+### 3. Distance Utilities (`src/distance_utils.R`)
+- `calculate_distance()` — Mahalanobis distance computation
+- Matrix utilities: `tr()`, `sym()`, `safe_det_powm()`
+- Orthogonal matrix parameterization: `QPl()`, `PlQ()`
 
-### 3. Numerical Stability
+### 4. Covariance Updates (`src/covariance_updates.R`)
+- `D.update.Red()` — shared D matrix updates (models F7-F10)
+- `Dk.update.Red()` — cluster-specific D_k updates (models F11-F14)
+- Model-specific wrapper functions
+
+### 5. Simulation Framework (`simulations/`)
+- `data_generation.R` — synthetic dataset generation
+- `run_simulation.R` — comprehensive simulation execution
+
+### 6. Numerical Stability
 To ensure robustness:
 - eigenvalue regularization
 - determinant normalization
@@ -108,7 +133,12 @@ This allows controlled comparison across models and parameter regimes.
 
 ## ▶️ Example Usage
 
+### Basic Clustering
+
 ```r
+# Source the main clustering function
+source("src/pd_clust.R")
+
 X <- as.matrix(iris[,1:4])
 
 fit <- pd_clust(
@@ -123,3 +153,21 @@ fit <- pd_clust(
 
 fit$C      # cluster centers
 fit$P      # membership matrix
+```
+
+### Running Simulations
+
+```r
+# Source simulation functions
+source("simulations/run_simulation.R")
+
+# Run comprehensive simulation
+results <- run_simulation(
+  run_tag = "tdist_n500",
+  n_values = c(500),
+  m_values = c(2, 3),
+  q_values = c(1, 2, 3),
+  datasets_per_n = 50,
+  iterations = 200
+)
+```

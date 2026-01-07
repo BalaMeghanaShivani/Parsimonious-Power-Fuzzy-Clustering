@@ -1,0 +1,33 @@
+# R
+.Rhistory
+.Rapp.history
+.RData
+.Ruserdata
+*.Rproj
+*.Rproj.user
+
+# Results and outputs
+results/*
+!results/.gitkeep
+backup_results/*
+!backup_results/.gitkeep
+
+# Excel files (simulation results)
+*.xlsx
+*.xls
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.log
+
